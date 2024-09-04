@@ -1,0 +1,11 @@
+fastapi
+psycopg2-binary
+sqlalchemy
+alembic
+python-dotenv
+pydantic
+passlib[bcrypt]
+uvicorn
+python-jose==3.3.0
+python-multipart
+bcrypt==4.2.0
