@@ -1,15 +1,24 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from datetime import timedelta
+from jose import JWTError, jwt
+from datetime import timedelta, datetime
 
 from app import models, schemas, utils
 from app.database import get_db
-from app.utils import create_access_token
+from app.utils import create_access_token, get_current_user
 
 router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+@router.get("/me", response_model=schemas.User)
+async def get_me(current_user: schemas.User = Depends(get_current_user)):
+    """
+    Retrieve current user's information.
+    Requires a valid Bearer token to be added in Authorization header.
+    """
+    return current_user
 
 @router.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
