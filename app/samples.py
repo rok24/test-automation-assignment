@@ -90,3 +90,5 @@ EXCHANGE_OPTIONS = [
         "lead_time_days": 0
     },
 ]
+
+FEASIBILITY_EXCHANGES = ["3E62K", "H4QHB", "NYDWX", "P42CP", "KOABD"]

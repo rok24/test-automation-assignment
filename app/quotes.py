@@ -7,7 +7,7 @@ from app.samples import EXCHANGE_OPTIONS
 quote_router = APIRouter(tags=["Quotes"])
 
 
-@quote_router.post("/quotes")
+@quote_router.post("/quote")
 async def new_service_quote(request: QuoteRequest) -> QuoteResponse:
     """
     Endpoint to request feasible exchanges that has capacity

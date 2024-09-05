@@ -144,3 +144,62 @@ class QuoteResponse(BaseModel):
             ]
         }
     }
+
+
+class Partner(BaseModel):
+    id: str  # need this in case names change
+    name: str  # need this for human readability
+
+
+class Service(BaseModel):
+    serving_exchange_mdf_id: str
+    serving_exchange_code: str = Field(description="1141 code")
+    requested_data_rate_mbps: int
+    requested_access_rate_mbps: int
+    service_type: Literal["EAD LA", "EAD", "EAD ER"]
+    exchange_type: str = None
+
+    @model_validator(mode="after")
+    def check_rates(self):
+        if self.requested_data_rate_mbps > self.requested_access_rate_mbps:
+            raise ValueError("Data rate cannot exceed access rate, please provide valid rates.")
+        return self
+
+class OrderRequest(RequestModel):
+    order_type: Literal["NEW", "MODIFY", "CEASE"]
+    linked_asset_id: str = Field(default=None, description="Linked asset reference for an RO2 order")
+    interface_type: str  # might not need
+    # might not need partner deets
+    contract_term_months: int
+    partner: Partner
+    service: Service
+    order_id: str
+    asset_id: str
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "service": {
+                        "serving_exchange_code": "SMBA",
+                        "serving_exchange_mdf_id": "SMBA",
+                        "requested_data_rate_mbps": 1000,
+                        "requested_access_rate_mbps": 1000,
+                        "service_type": "EAD",
+                        "exchange_type": "T1.1",
+                    },
+                    "transaction_id": "728167dc-b6c7-49ef-af68-ac9c5aec70ec",
+                    "order_type": "NEW",
+                    "interface_type": "100BASE-TX/RJ45/TP",
+                    "partner": {"id": "partner_id", "name": "Partner A"},
+                    "order_id": "order_id_example",
+                    "asset_id": "SKY-TPA1-002",
+                    "linked_asset_id": "SKY-TPA1-001",
+                    "contract_term_months": 12,
+                }
+            ]
+        }
+    }
+
+class OrderResponse(BaseModel):
+    lead_time_days: int
